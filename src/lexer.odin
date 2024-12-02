@@ -25,15 +25,30 @@ lex_chars :: proc(lexer: ^Lexer, chars: CharSet) -> string {
     return lexer.input[start_pos:lexer.pos]
 }
 
-lex_int :: proc(lexer: ^Lexer, skip_ws: bool = true) -> (int, bool) {
+lex_until :: proc(lexer: ^Lexer, chars: CharSet) -> string {
+    return lex_chars(lexer, ~chars)
+}
+
+lex_until_after :: proc(lexer: ^Lexer, chars: CharSet) -> string {
+    lex_until(lexer, chars)
+    return lex_chars(lexer, chars)
+}
+
+lex_to_next_line :: proc(lexer: ^Lexer) -> string {
+    cur_line := lex_until(lexer, Cs_NewLine)
+    lex_chars(lexer, Cs_NewLine)
+    return cur_line
+}
+
+lex_maybe_int :: proc(lexer: ^Lexer, skip_ws: bool = true) -> (int, bool) {
     if skip_ws do lex_ws(lexer)
     num := lex_chars(lexer, Cs_Decimals)
     if num == "" do return 0, false
     return strconv.atoi(num), true
 }
 
-lex_expect_int :: proc(lexer: ^Lexer, skip_ws: bool = true) -> int {
-    return lex_int(lexer, skip_ws) or_else panic("Not an int")
+lex_int :: proc(lexer: ^Lexer, skip_ws: bool = true) -> int {
+    return lex_maybe_int(lexer, skip_ws) or_else panic("Not an int")
 }
 
 lex_eof :: proc(lexer: ^Lexer) -> bool {

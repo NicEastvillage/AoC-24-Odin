@@ -7,9 +7,9 @@ day2a :: proc(input: string) {
     safe := 0
 
     line_loop: for !lex_eof(&lexer) {
-        defer { lex_chars(&lexer, ~Cs_NewLine); lex_chars(&lexer, Cs_NewLine) }
-        first := lex_expect_int(&lexer)
-        prev := lex_expect_int(&lexer)
+        defer { lex_to_next_line(&lexer) }
+        first := lex_int(&lexer)
+        prev := lex_int(&lexer)
 
         dir := 0
         switch {
@@ -20,7 +20,7 @@ day2a :: proc(input: string) {
         }
 
         for {
-            num := lex_int(&lexer) or_break
+            num := lex_maybe_int(&lexer) or_break
             if (num - prev + 2 * dir) / 3 != dir do continue line_loop
             prev = num
         }
@@ -36,23 +36,24 @@ day2b :: proc(input: string) {
     report : [8]int = ---;
     safe := 0
     line_loop: for !lex_eof(&lexer) {
-        defer { lex_chars(&lexer, ~Cs_NewLine); lex_chars(&lexer, Cs_NewLine); }
+        defer { lex_to_next_line(&lexer) }
         n := 0
         for n < 8 {
-            report[n] = lex_int(&lexer) or_break
+            report[n] = lex_maybe_int(&lexer) or_break
             n += 1
         }
-        for i := 0; i < n; i += 1 {
-            if is_safe_w_skip(report[0:n], i) {
-                safe += 1
-                break
+        if i := find_error(report[:n], -1); i != -1 {
+            // Last case with skip=0 is require for report 20 22 21 19. Err at 21, but 20 is the culprit
+            if find_error(report[:n], i) != -1 && find_error(report[:n], i - 1) != -1 && find_error(report[:n], 0) != -1 {
+                continue
             }
         }
+        safe += 1
     }
     fmt.println(safe)
 }
 
-is_safe_w_skip :: proc(report: []int, skip: int) -> bool {
+find_error :: proc(report: []int, skip: int) -> int {
     i := skip != 0 ? 0 : 1
     first := report[i]; i += 1
     if skip == i do i += 1
@@ -60,8 +61,8 @@ is_safe_w_skip :: proc(report: []int, skip: int) -> bool {
 
     dir := 0
     switch {
-    case first == prev: return false
-    case abs(first - prev) > 3: return false
+    case first == prev: return i - 1
+    case abs(first - prev) > 3: return i - 1
     case first < prev: dir = 1
     case first > prev: dir = -1
     }
@@ -72,9 +73,9 @@ is_safe_w_skip :: proc(report: []int, skip: int) -> bool {
             continue
         }
         num := report[i]; i += 1
-        if (num - prev + 2 * dir) / 3 != dir do return false
+        if (num - prev + 2 * dir) / 3 != dir do return i - 1
         prev = num
     }
 
-    return true
+    return -1
 }

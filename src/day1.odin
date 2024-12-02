@@ -15,17 +15,13 @@ day1a :: proc(input: string) {
     left : [N]int = ---;
     right : [N]int = ---;
 
-    scn : scanner.Scanner
-    scanner.init(&scn, input)
-    scn.flags = scanner.Scan_Flags{.Scan_Ints}
+    lexer := Lexer{ input, 0, Cs_SpaceTabs | Cs_NewLine }
 
     for i in 0..<N {
-        scanner.scan(&scn)
-        left[i] = strconv.atoi(scanner.token_text(&scn))
+        left[i] = lex_int(&lexer)
         heap.push(left[:i+1], less)
 
-        scanner.scan(&scn)
-        right[i] = strconv.atoi(scanner.token_text(&scn))
+        right[i] = lex_int(&lexer)
         heap.push(right[:i+1], less)
     }
 
@@ -47,19 +43,15 @@ day1b :: proc(input: string) {
     left : [MAX - MIN]i8;
     right : [MAX - MIN]i8;
 
-    scn : scanner.Scanner
-    scanner.init(&scn, input)
-    scn.flags = scanner.Scan_Flags{.Scan_Ints}
+    lexer := Lexer{ input, 0, Cs_SpaceTabs | Cs_NewLine }
 
     sum := 0
     for i in 0..<N {
-        scanner.scan(&scn)
-        l := strconv.atoi(scanner.token_text(&scn))
+        l := lex_int(&lexer)
         left[l - MIN] += 1;
         sum += l * int(right[l - MIN])
 
-        scanner.scan(&scn)
-        r := strconv.atoi(scanner.token_text(&scn))
+        r := lex_int(&lexer)
         right[r - MIN] += 1;
         sum += r * int(left[r - MIN])
     }
