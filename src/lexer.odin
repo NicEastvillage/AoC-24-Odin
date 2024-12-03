@@ -1,6 +1,7 @@
 package main
 
 import "core:strconv"
+import "core:strings"
 
 CharSet :: distinct bit_set[u8(0)..<u8(128); u128]
 Cs_Decimals :: CharSet{'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'}
@@ -49,6 +50,27 @@ lex_maybe_int :: proc(lexer: ^Lexer, skip_ws: bool = true) -> (int, bool) {
 
 lex_int :: proc(lexer: ^Lexer, skip_ws: bool = true) -> int {
     return lex_maybe_int(lexer, skip_ws) or_else panic("Not an int")
+}
+
+lex_jump_to_after_seq :: proc(lexer: ^Lexer, seq: string) -> (string, bool) {
+    if i := strings.index(lexer.input[lexer.pos:], seq); i != -1 {
+        skipped := lexer.input[lexer.pos:][:i]
+        lexer.pos += i + len(seq)
+        return skipped, true
+    }
+    return "", false
+}
+
+lex_maybe_ch :: proc(lexer: ^Lexer, ch: u8) -> bool {
+    if lexer.pos < len(lexer.input) && lexer.input[lexer.pos] == ch {
+        lexer.pos += 1
+        return true
+    }
+    return false
+}
+
+lex_ch :: proc(lexer: ^Lexer, ch: u8) {
+    if !lex_maybe_ch(lexer, ch) do panic("Not expected char")
 }
 
 lex_eof :: proc(lexer: ^Lexer) -> bool {
