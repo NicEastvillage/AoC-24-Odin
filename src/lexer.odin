@@ -61,7 +61,8 @@ lex_jump_to_after_seq :: proc(lexer: ^Lexer, seq: string) -> (string, bool) {
     return "", false
 }
 
-lex_maybe_ch :: proc(lexer: ^Lexer, ch: u8) -> bool {
+lex_maybe_ch :: proc(lexer: ^Lexer, ch: u8, skip_ws: bool = true) -> bool {
+    if skip_ws do lex_ws(lexer)
     if lexer.pos < len(lexer.input) && lexer.input[lexer.pos] == ch {
         lexer.pos += 1
         return true
@@ -69,8 +70,8 @@ lex_maybe_ch :: proc(lexer: ^Lexer, ch: u8) -> bool {
     return false
 }
 
-lex_ch :: proc(lexer: ^Lexer, ch: u8) {
-    if !lex_maybe_ch(lexer, ch) do panic("Not expected char")
+lex_ch :: proc(lexer: ^Lexer, ch: u8, skip_ws: bool = true) {
+    if !lex_maybe_ch(lexer, ch, skip_ws) do panic("Not expected char")
 }
 
 lex_eof :: proc(lexer: ^Lexer) -> bool {
