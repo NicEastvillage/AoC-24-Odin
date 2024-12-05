@@ -37,7 +37,7 @@ lex_until_after :: proc(lexer: ^Lexer, chars: CharSet) -> string {
 
 lex_to_next_line :: proc(lexer: ^Lexer) -> string {
     cur_line := lex_until(lexer, Cs_NewLine)
-    lex_chars(lexer, Cs_NewLine)
+    lexer.pos += 2 // Skip \r\n
     return cur_line
 }
 
