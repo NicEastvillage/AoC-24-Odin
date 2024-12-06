@@ -38,6 +38,7 @@ main :: proc() {
     case 3: if variant == 'a' do day3a(input); else do day3b(input)
     case 4: if variant == 'a' do day4a(input); else do day4b(input)
     case 5: day5(input)
+    case 6: day6(input)
     case: panic("Not implemented yet")
     }
 }

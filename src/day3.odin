@@ -8,11 +8,11 @@ day3a :: proc(input: string) {
     sum := 0
     for {
         lex_jump_to_after_seq(&lexer, "mul") or_break
-        lex_maybe_ch(&lexer, '(') or_continue
+        lex_maybe_specific_ch(&lexer, '(') or_continue
         fst := lex_maybe_int(&lexer) or_continue
-        lex_maybe_ch(&lexer, ',') or_continue
+        lex_maybe_specific_ch(&lexer, ',') or_continue
         snd := lex_maybe_int(&lexer) or_continue
-        lex_maybe_ch(&lexer, ')') or_continue
+        lex_maybe_specific_ch(&lexer, ')') or_continue
         sum += fst * snd
     }
     fmt.println(sum)
@@ -28,11 +28,11 @@ day3b :: proc(input: string) {
             enabled = d > 0
         }
         enabled or_continue
-        lex_maybe_ch(&lexer, '(') or_continue
+        lex_maybe_specific_ch(&lexer, '(') or_continue
         fst := lex_maybe_int(&lexer) or_continue
-        lex_maybe_ch(&lexer, ',') or_continue
+        lex_maybe_specific_ch(&lexer, ',') or_continue
         snd := lex_maybe_int(&lexer) or_continue
-        lex_maybe_ch(&lexer, ')') or_continue
+        lex_maybe_specific_ch(&lexer, ')') or_continue
         sum += fst * snd
     }
     fmt.println(sum)
