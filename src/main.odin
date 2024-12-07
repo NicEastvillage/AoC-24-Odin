@@ -4,6 +4,7 @@ import "core:fmt"
 import "core:os"
 import "core:strconv"
 import "core:strings"
+import "core:time"
 
 main :: proc() {
     if len(os.args) != 2 {
@@ -31,6 +32,7 @@ main :: proc() {
 
     input := string(data)
     fmt.printfln("Evaluating day %v%c:", day, variant)
+    start_tick := time.tick_now()
     switch day {
     case 0: day0(input)
     case 1: if variant == 'a' do day1a(input); else do day1b(input)
@@ -42,6 +44,8 @@ main :: proc() {
     case 7: if variant == 'a' do day7a(input); else do day7b(input)
     case: panic("Not implemented yet")
     }
+    duration := time.tick_since(start_tick)
+    fmt.println(duration)
 }
 
 day0 :: proc(input: string) {
