@@ -44,8 +44,8 @@ day7b :: proc(input: string) {
         test_rec :: proc(val: int, nums: []int, goal: int) -> bool {
             if len(nums) == 0 do return val == goal
             if val > goal do return false
-            digits := int(math.pow10(math.floor(math.log10(f32(nums[0]))) + 1))
-            return test_rec(val + nums[0], nums[1:], goal) || test_rec(val * nums[0], nums[1:], goal) || test_rec(val * digits + nums[0], nums[1:], goal)
+            @(static) digits_lut := [?]int{ 0..<10 = 10, 10..<100 = 100, 100..<1000 = 1000 }
+            return test_rec(val + nums[0], nums[1:], goal) || test_rec(val * nums[0], nums[1:], goal) || test_rec(val * digits_lut[nums[0]] + nums[0], nums[1:], goal)
         }
 
         if test_rec(nums[0], nums[1:n], goal) do res += goal
