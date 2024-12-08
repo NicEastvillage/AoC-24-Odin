@@ -77,6 +77,7 @@ lex_specific_ch :: proc(lexer: ^Lexer, ch: u8, skip_ws: bool = true) {
 lex_maybe_ch :: proc(lexer: ^Lexer, skip_ws: bool = true) -> (u8, bool) {
     if skip_ws do lex_ws(lexer)
     if lexer.pos >= len(lexer.input) do return 0, false
+    if lexer.input[lexer.pos] == '\r' || lexer.input[lexer.pos] == '\n' do return 0, false
     lexer.pos += 1
     return lexer.input[lexer.pos - 1], true
 }
