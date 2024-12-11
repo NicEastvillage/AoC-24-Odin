@@ -45,7 +45,7 @@ main :: proc() {
     case 8: if variant == 'a' do day8a(input); else do day8b(input)
     case 9: if variant == 'a' do day9a(data); else do day9b(input)
     case 10: if variant == 'a' do day10(input, false); else do day10(input, true)
-    case 11: if variant == 'a' do day11a(input); else do day11b(input)
+    case 11: if variant == 'a' do day11(input, 25); else do day11(input, 75)
     case: panic("Not implemented yet")
     }
     duration := time.tick_since(start_tick)

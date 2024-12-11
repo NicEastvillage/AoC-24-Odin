@@ -2,18 +2,17 @@ package main
 
 import "core:fmt"
 
-day11a :: proc(input: string) {
-    BLINKS :: 25
+day11 :: proc(input: string, $BLINKS: int) {
     // Key in map: current stone engraving.
     // Index *i*: number of stones after *i* + 1 blinks.
-    cache := make(map[int][BLINKS]int) // Leaked
+    cache := make(map[int][BLINKS]int, 4096) // Leaked
     calc :: proc(val: int, blinks_left: int, cache: ^map[int][BLINKS]int) -> int {
         //for _ in 0..<BLINKS - blinks_left do fmt.print('|')
         //fmt.println(val)
         if blinks_left == 0 do return 1
-        if val not_in cache do cache[val] = [BLINKS]int{ 0..<BLINKS = 0 }
+        if val not_in cache do cache[val] = [BLINKS]int{}
         arr := &cache[val]
-        if arr[blinks_left - 1] != 0 do return arr[blinks_left - 1]
+        if arr[blinks_left - 1] > 0 do return arr[blinks_left - 1]
 
         k := 0
         if val == 0 do k = calc(1, blinks_left - 1, cache)
@@ -41,15 +40,13 @@ day11a :: proc(input: string) {
         } else {
             k = calc(val * 2024, blinks_left - 1, cache)
         }
-        //arr[blinks_left - 1] = k // FIXME: Cache does not work??
+
+        arr2 := &cache[val] // New access since cache may have reallocated
+        arr2[blinks_left - 1] = k
         return k
     }
     lexer := Lexer{ input, 0, Cs_SpaceTabs }
     res := 0
     for do res += calc(int(lex_maybe_int(&lexer) or_break), BLINKS, &cache)
-    fmt.println(res, len(cache))
-}
-
-day11b :: proc(input: string) {
-
+    fmt.println(res)
 }
