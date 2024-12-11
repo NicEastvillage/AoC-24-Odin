@@ -40,7 +40,7 @@ day10 :: proc(input: string, double_count: bool) {
     }
 
     res := 0
-    seen := make([dynamic][2]i16, 0, N * 2)
+    seen := make([dynamic][2]i16, 0, N * 2) // leaked
     for head in heads {
         clear(&seen)
         res += find_trails_rec(head, &grid, &seen, double_count)
