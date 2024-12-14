@@ -52,6 +52,20 @@ lex_int :: proc(lexer: ^Lexer, skip_ws: bool = true) -> int {
     return lex_maybe_int(lexer, skip_ws) or_else panic("Not an int")
 }
 
+lex_maybe_signed_int :: proc(lexer: ^Lexer, skip_ws: bool = true) -> (int, bool) {
+    if skip_ws do lex_ws(lexer)
+    if lexer.pos >= len(lexer.input) do return 0, false
+    neg := lexer.input[lexer.pos] == '-'
+    lexer.pos += int(neg)
+    val, ok := lex_maybe_int(lexer, false)
+    lexer.pos -= int(!ok && neg)
+    return neg ? -val : val, ok
+}
+
+lex_signed_int :: proc(lexer: ^Lexer, skip_ws: bool = true) -> int {
+    return lex_maybe_signed_int(lexer, skip_ws) or_else panic("Not an int")
+}
+
 lex_jump_to_after_seq :: proc(lexer: ^Lexer, seq: string) -> (string, bool) {
     if i := strings.index(lexer.input[lexer.pos:], seq); i != -1 {
         skipped := lexer.input[lexer.pos:][:i]
