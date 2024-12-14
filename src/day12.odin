@@ -52,12 +52,6 @@ day12b :: proc(input: string) {
             if 0 <= n && n < N * (N + 2) && input[n] == crop {
                 if id_grid[n] == 0 {
                     find_field_rec(field, crop, n, id_grid, input)
-                    for f := 1; f < 4; f += 2 {
-                        n2 := i + dir + DIRECTIONS[(d + f) %% 4]
-                        if 0 <= n2 && n2 < N * (N + 2) && input[n2] == crop && id_grid[n2] == 0 {
-                            find_field_rec(field, crop, n2, id_grid, input)
-                        }
-                    }
                 }
             } else {
                 diff[d] = true
@@ -65,11 +59,10 @@ day12b :: proc(input: string) {
         }
         for y := 0; y < 4; y += 2 {
             for x := 1; x < 4; x += 2 {
-                dx := DIRECTIONS[x]
-                dy := DIRECTIONS[y]
-                c := i + dx + dy
-                if diff[x] && diff[y] do field.corners += 1
-                else if !diff[x] && !diff[y] && id_grid[c] != field.id do field.corners += 1
+                c := i + DIRECTIONS[x] + DIRECTIONS[y]
+                if diff[x] && diff[y] || !diff[x] && !diff[y] && input[c] != crop {
+                    field.corners += 1
+                }
             }
         }
     }
